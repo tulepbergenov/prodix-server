@@ -28,10 +28,8 @@ export class TasksController {
     type: Task,
     isArray: true,
   })
-  getTasks(@Query() filterDto: GetTaskFilterDto): Task[] {
-    return Object.keys(filterDto).length
-      ? this.tasksService.getTasksWithFilters(filterDto)
-      : this.tasksService.getTasks();
+  getTasks(@Query() filterDto: GetTaskFilterDto): Promise<Task[]> {
+    return this.tasksService.getTasks(filterDto);
   }
 
   @Post()
@@ -41,7 +39,7 @@ export class TasksController {
     description: 'Create a task',
     type: Task,
   })
-  createTask(@Body() createTaskDto: CreateTaskDto): Task {
+  createTask(@Body() createTaskDto: CreateTaskDto): Promise<Task> {
     return this.tasksService.createTask(createTaskDto);
   }
 
@@ -52,7 +50,7 @@ export class TasksController {
     description: 'Get a task by id',
     type: Task,
   })
-  getTaskById(@Param('id') id: string): Task | undefined {
+  getTaskById(@Param('id') id: string): Promise<Task> {
     return this.tasksService.getTaskById(id);
   }
 
@@ -62,8 +60,8 @@ export class TasksController {
     status: 200,
     description: 'Delete a task by id',
   })
-  deleteTask(@Param('id') id: string): void {
-    this.tasksService.deleteTask(id);
+  deleteTask(@Param('id') id: string): Promise<void> {
+    return this.tasksService.deleteTask(id);
   }
 
   @Patch('/:id/status')
@@ -76,7 +74,7 @@ export class TasksController {
   updateTaskStatus(
     @Param('id') id: string,
     @Body() { status }: UpdateTaskStatusDto,
-  ): Task | undefined {
+  ): Promise<Task> {
     return this.tasksService.updateTaskStatus(id, status);
   }
 }
